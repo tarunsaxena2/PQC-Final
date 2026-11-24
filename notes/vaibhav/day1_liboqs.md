@@ -60,9 +60,9 @@ Raw output: enabled\_algorithms.txt
 
 \## Round-trip check (ML-KEM-768)
 
-CHECK: public key 1184 B, ciphertext 1088 B, secrets match: True
+Public key 1184 B, ciphertext 1088 B, secrets match: True
 
-(update this line with the real output of the rerun)
+(matches FIPS 203 sizes)
 
 
 

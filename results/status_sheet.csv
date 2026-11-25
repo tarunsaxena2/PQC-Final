@@ -1,2 +1,3 @@
 date,member,status,note
 2026-11-25,Tarun,done,"W1D1 complete: venv 3.14 and wheel check, GUI and CLI quick run OK, notes and issue log pushed"
+2026-11-25,Tarun,done,"W1D1 and W1D2 tool-layer work: venv 3.14, benchmark run, gap lists, mock facade, CLI and GUI tabs pushed"

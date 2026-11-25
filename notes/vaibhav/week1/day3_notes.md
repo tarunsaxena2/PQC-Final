@@ -8,4 +8,4 @@ This prints and saves `notes/vaibhav/week1/day3_kem_demo_results.md` with: size 
 
 Already checked in my sandbox with cryptography 50.0.2: the wheel exposes `MLKEM768` and `MLKEM1024` (no 512). Confirm the same on your Windows machine from the generated file; write the answer in the OpenSSL note section.
 
-Pure-Python back-end: not written yet because the existing benchmark script is not in the repo. When it is, wrap its ML-KEM in `code/key_layer/pure_backend.py` (same four functions as `liboqs_backend.py`) and the demo will pick it up automatically.
+Pure-Python back-end: now included (`code/key_layer/pure_backend.py`, core copied from the team benchmark script). `tests/test_pure_backend.py` checks sizes, round trip, implicit rejection, same public key from the same 64 B seed as OpenSSL, and cross-decapsulation both ways.

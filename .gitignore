@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 pqc_stego_results.xlsx
 tmp_test/
+keys/
+dk_*.bin

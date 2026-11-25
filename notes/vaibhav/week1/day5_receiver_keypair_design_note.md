@@ -10,7 +10,7 @@
 |---|---|
 | `receiver.ek` | magic `PQEK`, version 1 byte, level 2 bytes, raw ek |
 | `receiver.dk.enc` | magic `PQDK`, version, level, scrypt salt (16 B), scrypt params (n, r, p), nonce (12 B), AES-GCM ciphertext of raw dk with its tag |
-| `sim_qkd.key` | magic `SIMQKDv1`, 32 B key, 4 B check (simulation only) |
+| `sim_qkd.key` | magic `SIMQKDv1`, length byte (16 or 32), key, 4 B check (simulation only). Default 16 B = the 128-bit key the BB84 simulator produces |
 
 ## dk storage on Windows (V7)
 - Default: passphrase-encrypted with scrypt (cryptography `Scrypt`) and AES-GCM. No dependence on Unix file mode bits.
@@ -20,7 +20,7 @@
 
 ## Simulated-QKD key file design (hybrid-qkdsim)
 - One side writes `sim_qkd.key` once (`write_qkd_keyfile`); the file is delivered out of band to the other side.
-- Both sides read it with `read_qkd_keyfile` and pass `K_QKD` to `derive_keys(ss, k_qkd)`.
+- Both sides read it with `read_qkd_keyfile` and pass `K_QKD` (16 B) to `derive_keys(ss, k_qkd)`.
 - Extract without the file fails cleanly (test T11). README and report must say the word "simulation".
 
 ## Authentication gap (feeds 6.12a)

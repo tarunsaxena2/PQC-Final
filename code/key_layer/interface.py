@@ -28,7 +28,9 @@ FIPS203_SIZES = {
 }
 LEVELS = tuple(FIPS203_SIZES)
 
-HKDF_INFO = b"PQC-STEGO-v1 container keys"
+# Same info string as the team benchmark script, so the first 32 bytes of the new 64 B output
+# equal the old 32 B output (HKDF-Expand prefix property): K_AES and K_perm do not change.
+HKDF_INFO = b"pqc-stego-v1"
 K_AES_LEN, K_PERM_LEN, K_MAC_LEN = 16, 16, 32
 OKM_LEN = K_AES_LEN + K_PERM_LEN + K_MAC_LEN  # 64
 
@@ -77,9 +79,12 @@ def zeroise(buf) -> bool:
 
 # ---- simulated-QKD key file (hybrid-qkdsim mode only) -----------------------
 # This file is a SIMULATION of a key delivered by QKD. It is shared out of band.
-# It is not quantum security. Format: MAGIC(8) | key(32) | check(4)
+# It is not quantum security. Format: MAGIC(8) | length(1) | key | check(4)
+# The BB84 simulator in the benchmark script outputs a 128-bit (16 B) key, so 16 B is the default;
+# 32 B is also accepted.
 QKD_MAGIC = b"SIMQKDv1"
-QKD_KEY_LEN = 32
+QKD_KEY_LEN = 16
+QKD_ALLOWED_LENGTHS = (16, 32)
 
 
 class QkdKeyFileError(KeyLayerError):
@@ -87,13 +92,13 @@ class QkdKeyFileError(KeyLayerError):
 
 
 def write_qkd_keyfile(path, key: bytes | None = None) -> Path:
-    """Write a simulated-QKD key file (binary, pathlib). Fresh key if none given."""
+    """Write a simulated-QKD key file (binary, pathlib). Fresh 16 B key if none given."""
     key = os.urandom(QKD_KEY_LEN) if key is None else bytes(key)
-    if len(key) != QKD_KEY_LEN:
-        raise QkdKeyFileError("simulated QKD key must be 32 bytes")
-    check = hashlib.sha256(QKD_MAGIC + key).digest()[:4]
+    if len(key) not in QKD_ALLOWED_LENGTHS:
+        raise QkdKeyFileError("simulated QKD key must be 16 or 32 bytes")
+    body = QKD_MAGIC + bytes([len(key)]) + key
     p = Path(path)
-    p.write_bytes(QKD_MAGIC + key + check)
+    p.write_bytes(body + hashlib.sha256(body).digest()[:4])
     return p
 
 
@@ -106,9 +111,12 @@ def read_qkd_keyfile(path) -> bytes:
         raise QkdKeyFileError("simulated-QKD key file not found") from None
     except OSError:
         raise QkdKeyFileError("simulated-QKD key file cannot be read") from None
-    if len(raw) != 8 + QKD_KEY_LEN + 4 or raw[:8] != QKD_MAGIC:
+    if len(raw) < 14 or raw[:8] != QKD_MAGIC:
         raise QkdKeyFileError("not a valid simulated-QKD key file")
-    key, check = raw[8:40], raw[40:]
-    if hashlib.sha256(QKD_MAGIC + key).digest()[:4] != check:
+    n = raw[8]
+    if n not in QKD_ALLOWED_LENGTHS or len(raw) != 9 + n + 4:
+        raise QkdKeyFileError("not a valid simulated-QKD key file")
+    body, check = raw[:9 + n], raw[9 + n:]
+    if hashlib.sha256(body).digest()[:4] != check:
         raise QkdKeyFileError("simulated-QKD key file is corrupted")
-    return key
+    return raw[9:9 + n]

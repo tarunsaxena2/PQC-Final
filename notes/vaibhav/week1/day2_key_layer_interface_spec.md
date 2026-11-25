@@ -13,7 +13,7 @@ Changing anything here needs all four members to agree (team rule 5).
 | `split_keys(okm)` | `(K_AES, K_perm, K_MAC)` | 16 B + 16 B + 32 B |
 | `zeroise(buf)` | bool | bytearray / writable memoryview only; best effort, see limit below |
 | `write_qkd_keyfile(path, key=None)` | Path | simulated-QKD key file, hybrid-qkdsim only |
-| `read_qkd_keyfile(path)` | 32 B `K_QKD` | raises `QkdKeyFileError` with a plain message |
+| `read_qkd_keyfile(path)` | 16 B `K_QKD` (32 B also accepted) | raises `QkdKeyFileError` with a plain message |
 
 Errors: every failure raises `KeyLayerError` (or the subclass `QkdKeyFileError`) with a message that never contains secret bytes.
 
@@ -25,7 +25,7 @@ Errors: every failure raises `KeyLayerError` (or the subclass `QkdKeyFileError`)
 | 1024 | 1568 | 3168 | 1568 | 32 |
 
 ## Key hierarchy
-`ss` (32 B) -> HKDF-SHA256 (info `PQC-STEGO-v1 container keys`) -> 64 B = `K_AES` 16 B + `K_perm` 16 B + `K_MAC` 32 B.
+`ss` (32 B) -> HKDF-SHA256 (info `pqc-stego-v1`, the same string as the team benchmark script, so the first 32 B equal the old K_AES and K_perm) -> 64 B = `K_AES` 16 B + `K_perm` 16 B + `K_MAC` 32 B.
 Optional AES-256 (Uday) would use a 32 B `K_AES`; that changes the split and needs the group's agreement.
 The symbol is `K_perm` everywhere (never K-pi).
 

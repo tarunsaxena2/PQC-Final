@@ -57,8 +57,14 @@ def test_zeroise():
 
 def test_qkd_keyfile_roundtrip_and_errors(tmp_path):
     p = tmp_path / "sim_qkd.key"
-    key = write_qkd_keyfile(p) and read_qkd_keyfile(p)
-    assert len(key) == 32
+    write_qkd_keyfile(p)
+    key = read_qkd_keyfile(p)
+    assert len(key) == 16                      # matches the BB84 simulator's 128-bit key
+    p32 = tmp_path / "sim32.key"
+    write_qkd_keyfile(p32, b"\x07" * 32)
+    assert read_qkd_keyfile(p32) == b"\x07" * 32
+    with pytest.raises(QkdKeyFileError):
+        write_qkd_keyfile(tmp_path / "bad.key", b"x" * 20)
     assert read_qkd_keyfile(p) == key
     with pytest.raises(QkdKeyFileError):
         read_qkd_keyfile(tmp_path / "missing.key")
@@ -68,3 +74,12 @@ def test_qkd_keyfile_roundtrip_and_errors(tmp_path):
     p.write_bytes(b"garbage")
     with pytest.raises(QkdKeyFileError):
         read_qkd_keyfile(p)
+
+
+def test_first_32_bytes_match_old_benchmark_hkdf():
+    """New 64 B output starts with the old 32 B (K_AES || K_perm) from the benchmark script."""
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+    ss = bytes(range(32))
+    old = HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=b"pqc-stego-v1").derive(ss)
+    assert derive_keys(ss)[:32] == old

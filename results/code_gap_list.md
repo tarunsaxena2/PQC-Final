@@ -1,0 +1,12 @@
+# Code gap list - script versus plan v7
+- CLI flags missing: --only E1 to E9, --backend, --mode
+- CLI subcommands missing: keygen, hide, extract
+- No hide and extract facade, no container format with header, mode byte and MAC
+- GUI has the Benchmark tab only. Keygen, Hide and Extract tabs missing
+- Experiments: script has E1 to E4 only. E5 to E9 not implemented
+- Defaults: KEM trials 10 and pipeline trials 5, plan needs 30 plus trials and 10 plus memory runs
+- Memory: tracemalloc only. psutil peak_wset, idle baseline and delta missing
+- Key hierarchy: docstring says 128-bit AES key plus 128-bit permutation key. Plan needs 64 B HKDF output with K_MAC
+- Integrity: docstring mentions AES-128-CBC only. HMAC-SHA256 encrypt-then-MAC missing
+- Hybrid: only ML-KEM plus BB84-sim in one process. Modes pqc, hybrid-x25519 and hybrid-qkdsim missing
+- No subprocess runner with a fresh python.exe per experiment

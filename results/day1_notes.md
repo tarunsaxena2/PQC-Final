@@ -1,0 +1,12 @@
+# Week 1 Day 1 notes - Tarun
+- Date 2026-11-25, Windows 10 build 19045, Python 3.14.0 in .venv
+- All 7 packages installed with --only-binary, exact versions in results\versions_day1.json
+- Tk 8.6 works
+- --selftest and --cli --quick both exit 0 on Windows with Python 3.14
+- ML-KEM back-end used: cryptography 50.0.2 OpenSSL. liboqs not installed yet, so these are not liboqs results
+- Selftest: pure vs OpenSSL keygen identical from seed and cross-decaps PASS for 768 and 1024
+- Mismatch: code docstring says cryptography 47 or newer, installed is 50.0.2
+- No Linux-only calls found. To fix: os.path.abspath, JSON open without utf-8
+- Gaps: psutil memory, --only, --backend, --mode, hide and extract commands
+- Quick run is a 3-trial smoke test, not for the report. Quick config uses 8 s audio so capacity is 20640 B
+- To verify in full E1 run: BB84 classical bytes were 947 B at 2048 qubits, plan says about 739 B

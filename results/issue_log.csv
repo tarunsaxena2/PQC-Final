@@ -1,1 +1,5 @@
 ID,date,reporter,module,description,severity,owner,status
+1,2026-11-24,Tarun,tool,"Docstring says cryptography 47 or newer but installed is 50.0.2",low,Tarun,open
+2,2026-11-24,Tarun,tool,"Memory measured with tracemalloc only - psutil peak_wset and idle baseline missing",medium,Tarun,open
+3,2026-11-24,Tarun,key,"liboqs-python not installed yet - runs use cryptography ML-KEM backend",high,Vaibhav,open
+4,2026-11-24,Tarun,tool,"JSON export opens file without encoding utf-8; os.path.abspath used instead of pathlib",low,Tarun,open

@@ -1,0 +1,5 @@
+﻿ID,section,claim,workbook_cell,owner,status,old_run_flag
+U-01,4.4,Header for ML-KEM-768 is 1099 B,scratch\overhead_table.py output,Uday,open,no
+U-02,6.10,Container overhead per mode and cipher,sheet E8_roundtrip after merge,Uday,open,no
+U-03,6.8,Ablation BER / PSNR / entropy / locality,sheet E3_ablation after merge,Uday,open,no
+U-04,6.1,Tamper cases rejected (T6),pytest log,Uday,open,no
